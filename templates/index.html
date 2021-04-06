@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <title>Blockchain</title>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-6 mx-auto mt-5">
+            <h1 class="mt-5">Pogodbe</h1>
+        </div>
+        <div class="col-6 mx-auto mt-5">
+            <div class="row mt-3">
+                <div class="col">
+                    <form action="{{ url_for('register_nodes')}}" method="POST">
+                        <label for="Node" class="form-label">Other node</label>
+                        <input type="text" class="form-control" id="Node" value="http://127.0.0.1:5001/" name="nodes">
+                        <button class="btn btn-warning">Registracija</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6 mx-auto mt-5">
+            <form action="{{ url_for('new_transaction')}}" method="POST">
+                <label for="ponudnik" class="form-label">Ponudnik</label>
+                <div class="input-group mb-3">
+                    <select class="form-select" aria-label="Default select example" id="ponudnik" name="sender">
+                        <option disabled selected value> -- izberi ponudnika --</option>
+                        <option value="Geni">Geni-I</option>
+                        <option value="ECE">ECE</option>
+                        <option value="Petrol">Petrol</option>
+                    </select>
+                </div>
+
+                <label for="porabnik" class="form-label">Porabnik</label>
+                <div class="input-group mb-3">
+                    <select class="form-select" aria-label="Default select example" id="porabnik" name="recipient">
+                        <option disabled selected value> -- izberi porabnika --</option>
+                        <option value="Alfa d.d.">Alfa d.d.</option>
+                        <option value="Beta d.o.o.">Beta d.o.o.</option>
+                        <option value="Gama d.o.o.">Gama d.o.o.</option>
+                        <option value="Delta d.d.">Delta d.d.</option>
+                    </select>
+                </div>
+
+                <label for="kolicina" class="form-label">Količina</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon3">kW</span>
+                    <input type="text" class="form-control" id="kolicina" aria-describedby="basic-addon3"
+                           name="amount">
+                </div>
+
+                <button class="btn btn-primary">Dodaj transakcijo</button>
+
+            </form>
+        </div>
+
+        <div class="col-6 mx-auto mt-5">
+        <div class="row mt-3">
+            <div class="col">
+                <form action="{{ url_for('consensus') }}">
+                    <button class="btn btn-success">Sinhronizacija</button>
+                </form>
+            </div>
+            <div class="col">
+                <form action="{{ url_for('full_chain_view') }}">
+                    <button class="btn btn-secondary">Izpis verige</button>
+                </form>
+            </div>
+            <div class="col">
+                <form action="{{ url_for('mine') }}">
+                    {% if trans_num %}
+                    <button class="btn btn-info">Dodaj blok</button>
+                    {% else %}
+                    <button class="btn btn-info" disabled>Dodaj blok</button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    {% if chain_data %}
+                    <th scope="col">#</th>
+                    <th scope="col">Time stamp</th>
+                    <th scope="col">Contract content</th>
+                    <th scope="col">Proof</th>
+                    {% endif %}
+                    {% if transactions_data %}
+                    <th scope="col">#</th>
+                    <th scope="col">Sender</th>
+                    <th scope="col">Recipient</th>
+                    <th scope="col">Amount</th>
+                    {% endif %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for block in chain_data %}
+                <tr>
+                    <th scope="row">{{ block['index'] }}</th>
+                    <td>{{ block['timestamp'] }}</td>
+                    <td>{{ block['transactions'] }}</td>
+                    <td>{{ block['proof'] }}</td>
+                </tr>
+                {% endfor %}
+                {% for tr in transactions_data %}
+                <tr>
+                    <th scope="row">{{ trans_num }}</th>
+                    <td>{{ tr['sender'] }}</td>
+                    <td>{{ tr['recipient'] }}</td>
+                    <td>{{ tr['amount'] }}</td>
+                </tr>
+                {% endfor %}
+                {% if response_data %}
+                    <td>{{ response_data }}</td>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
